@@ -1,0 +1,416 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Online market IPi lari",
+    "version": "1.0.0",
+    "description": "Bu shaxsiy online market web siti uchun qilingan loyiha IPI lari"
+  },
+  "host": "localhost:8080",
+  "basePath": "/",
+  "schemes": ["http"],
+  "paths": {
+    "/api/register": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Oddiy foydalanuvchi uchun ro'yhatdan o'tish",
+        "description": "Foydalanuvchilar uchun ro'yhatdan o'tish",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "user",
+            "in": "body",
+            "required": true,
+            "description": "Username",
+            "schema": {
+              "type": "object",
+              "default": {
+                "email": "email",
+                "username": "username",
+                "password": "password"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "default": {
+                    "user": {
+                      "email": "email",
+                      "username": "username"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/login": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Foydalanuvchi uchun kirish",
+        "description": "Foydalanuvchilar uchun kirish",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "user",
+            "in": "body",
+            "required": true,
+            "description": "Username",
+            "schema": {
+              "type": "object",
+              "default": {
+                "email": "email",
+                "password": "password"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "default": {
+                    "token": "token hash",
+                    "time": "server time",
+                    "user": {
+                      "email": "email",
+                      "username": "username"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products/all": {
+      "get": {
+        "tags": ["Products"],
+        "summary": "Hamma mahsulotlarni olish uchun",
+        "description": "Hamma mahsulot propertylarini olish uchun, Pagenation qilish va category boyicha filter qo'yilgan bu kattaliklar query params orqali beriladi",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "The page number",
+            "type": "integer",
+            "required": false,
+            "default": 1
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The number of items per page",
+            "type": "integer",
+            "required": false,
+            "default": 10
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "description": "The category of items to retrieve",
+            "type": "string",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "default": [
+                    {
+                      "product": "Product object"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products/{id}": {
+      "get": {
+        "tags": ["Products"],
+        "summary": "Bitta mahsulotni olish uchun API",
+        "description": "Kiritilgan ID boyicha ma'lumot olishingiz mumin",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "params",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "default": [
+                    {
+                      "product": "Product object"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products/": {
+      "post": {
+        "tags": ["Products"],
+        "summary": "Maxsulot qoshish uchun",
+        "description": "Maxsulot qo'shayotgan foydalanuvchi seller rolida bo'lishi talab qilinadi",
+        "produces": ["multipart/form-data"],
+        "parameters": [
+          {
+            "name": "image",
+            "in": "form-data",
+            "required": true,
+
+            "type": "file"
+          },
+          {
+            "name": "product",
+            "in": "body",
+            "required": true,
+            "type": "object",
+            "default": {
+              "title": "title",
+              "description": "description",
+              "price": 5000,
+              "category": "category",
+              "image": "file"
+            }
+          },
+
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "default": [
+                    {
+                      "product": "Product object"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sellers/{id}": {
+      "post": {
+        "tags": ["Sellers"],
+        "summary": "Bitta Seller yaratish uchun  API",
+        "description": "Sotuvchi foydalnuvchi bo'lib ro'yhatdan o'tgan bo'lishi kerak",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "For token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "siz qo'shmoqchi bo'lgan user id si",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "default": "server sorovi natijasi"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Yangi admin qo'shish",
+        "description": "Faqat admin roliga ega bo'lgan foydalanuvchi admin yarata oladi",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "user",
+            "in": "body",
+            "required": true,
+            "description": "Username",
+            "schema": {
+              "type": "object",
+              "default": {
+                "email": "email",
+                "username": "username",
+                "password": "password"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "default": {
+                    "user": {
+                      "email": "email",
+                      "username": "username"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders/{id}": {
+      "post": {
+        "tags": ["Orders"],
+        "summary": "Yangi buyurtma qo'shish uchun",
+        "description": "Har bir mahsulot tanlanganda ushbu API ga so'rov jo'natiladi",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "quantity",
+            "in": "body",
+            "required": true,
+            "type": "number",
+            "default": {
+              "quantity": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "default": {
+                    "user": {
+                      "email": "email",
+                      "username": "username"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders/my-basket": {
+      "get": {
+        "tags": ["Orders"],
+        "summary": "Savatni olish uchun",
+        "description": "Mening buyurtmalarim",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "default": {
+                    "user": {
+                      "email": "email",
+                      "username": "username"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
