@@ -4,6 +4,8 @@
   "description": "for new interview",
   "main": "server.js",
   "scripts": {
+    "build": "npm install",
+    "start": "node server.js",
     "test": "mocha",
     "dev": "nodemon server.js"
   },
