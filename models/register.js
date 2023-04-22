@@ -5,7 +5,6 @@ const RegisterSchema = mongoose.Schema(
     username: {
       type: String,
       required: true,
-      unique: true,
       min: 6,
       max: 50,
       validate: [
@@ -45,7 +44,6 @@ const RegisterSchema = mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true,
       min: 6,
       max: 50,
       validate: [
@@ -54,15 +52,6 @@ const RegisterSchema = mongoose.Schema(
             return email != false && email.length >= 6 && email.length <= 50;
           },
           message: "E-mailni kiritish ta'lab qilinadi",
-        },
-        {
-          validator: async function (email) {
-            const count = await mongoose
-              .model("users")
-              .countDocuments({ email });
-            return count === 0;
-          },
-          message: "Bu emaildan oldin foydalanilgan",
         },
       ],
     },
