@@ -5,9 +5,9 @@
     "version": "1.0.0",
     "description": "Bu shaxsiy online market web siti uchun qilingan loyiha IPI lari"
   },
-  "host": "localhost:8080",
+  "host": "shy-pear-crab-kit.cyclic.app",
   "basePath": "/",
-  "schemes": ["http"],
+  "schemes": ["https"],
   "paths": {
     "/api/register": {
       "post": {
