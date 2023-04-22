@@ -5,7 +5,7 @@ const Auth = require("../middlewares/auth");
 const router = express.Router();
 
 //create seller for adding their own product
-router.post("/:id", Auth.verifyToken, async (req, res) => {
+router.post("/create/:id", Auth.verifyToken, async (req, res) => {
   const id = req.params.id;
   if (req.user.rol !== "admin")
     return res
@@ -20,6 +20,32 @@ router.post("/:id", Auth.verifyToken, async (req, res) => {
     res.status(200).json({ message: "Sotuvchi muvaffaqiyatli yaratildi" });
   } catch (err) {
     res.status(400).json({ error: "Bunday foydalanuvchi topilmadi" });
+  }
+});
+
+router.get("/all", Auth.verifyToken, async (req, res) => {
+  if (req.user.rol != "admin")
+    return res
+      .status(401)
+      .json({ err: "Siz bu o'zgartirishni amalgan oshira olmaysiz" });
+  try {
+    const users = await Users.find({ rol: "seller" });
+    return res.status(200).json(users);
+  } catch (err) {
+    return res.status(500).json({ err: "server internal error" });
+  }
+});
+
+router.get("/:id", Auth.verifyToken, async (req, res) => {
+  if (req.user.rol != "admin")
+    return res
+      .status(401)
+      .json({ err: "Siz bu o'zgartirishni amalgan oshira olmaysiz" });
+  try {
+    const user = await Users.findById(req.params.id);
+    return res.status(200).json({ user: user });
+  } catch (err) {
+    return res.status(500).json({ err: "server internal error" });
   }
 });
 

@@ -96,6 +96,167 @@
         }
       }
     },
+    "/api/user/update": {
+      "put": {
+        "tags": ["User"],
+        "summary": "Oddiy foydalanuvchi uchun ma'umotlar o'zgartirsh",
+        "description": "Foydalanuvchilar uchun ma'lumotlar o'zgartirish",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "user",
+            "schema": {
+              "type": "object",
+              "default": {
+                "newPassword": "newPassword",
+                "oldPassword": "oldPassword",
+                "username": "username"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "default": {
+                    "user": {
+                      "email": "email",
+                      "username": "username"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/delete": {
+      "delete": {
+        "tags": ["User"],
+        "summary": "Oddiy foydalanuvchi uchun tizimdan o'chib ketish",
+        "description": "Foydalanuvchilar uchun tizimdan o'chib ketish",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "default": {
+                    "user": {
+                      "email": "email",
+                      "username": "username"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/all": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Hamma userlar ma'lumotini olish uchun ",
+        "description": "Ushbu APIdan faqat  admin roliga ega foydalanuvchilar foydalanadi",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "default": [
+                    {
+                      "product": "Product object"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{id}": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Bitta foydalanuvchi ma'lumotlari olish",
+        "description": "Ushbu APIdan faqat  admin roliga ega foydalanuvchilar foydalanadi",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "default": [
+                    {
+                      "product": "Product object"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
     "/api/products/all": {
       "get": {
         "tags": ["Products"],
@@ -156,7 +317,7 @@
         "parameters": [
           {
             "name": "id",
-            "in": "params",
+            "in": "path",
             "required": true,
             "schema": {
               "type": "string"
@@ -240,7 +401,136 @@
         }
       }
     },
-    "/api/sellers/{id}": {
+    "/api/products/my-products": {
+      "get": {
+        "tags": ["Products"],
+        "summary": "Sotuvchilar O'zining qo'shgan maxsulotlari olishi uchun",
+        "description": "Sotuvchi roliga ega bo'lishi talab qilinadi",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "default": [
+                    {
+                      "product": "Product object"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products/delete/{id}": {
+      "delete": {
+        "tags": ["Products"],
+        "summary": "Sotuvchilar O'zining qo'shgan maxsulotlari o'chirib yuborishi mumkin",
+        "description": "Sotuvchi roliga ega bo'lishi talab qilinadi, xabar emailga jo'natiladi",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "default": [
+                    {
+                      "product": "Product object"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products/update/{id}": {
+      "put": {
+        "tags": ["Products"],
+        "summary": "Sotuvchilar O'zining qo'shgan maxsulotlari o'zgartirishlari mumkin",
+        "description": "Sotuvchi roliga ega bo'lishi talab qilinadi, xabar emailga jo'natiladi",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "Bu o'zgartirishni yuborish",
+            "schema": {
+              "type": "object",
+              "default": {
+                "title": "title",
+                "description": "description",
+                "price": 2000,
+                "category": "category"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "default": [
+                    {
+                      "product": "Product object"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sellers/create/{id}": {
       "post": {
         "tags": ["Sellers"],
         "summary": "Bitta Seller yaratish uchun  API",
@@ -271,6 +561,82 @@
                 "message": {
                   "type": "string",
                   "default": "server sorovi natijasi"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sellers/all": {
+      "get": {
+        "tags": ["Sellers"],
+        "summary": "Hamma sotuvchilar ma'lumotini olish uchun ",
+        "description": "Ushbu APIdan faqat  admin roliga ega foydalanuvchilar foydalanadi",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "default": [
+                    {
+                      "product": "Product object"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sellers/{id}": {
+      "get": {
+        "tags": ["Sellers"],
+        "summary": "Bitta sotuvchi ma'lumotlari olish",
+        "description": "Ushbu APIdan faqat  admin roliga ega foydalanuvchilar foydalanadi",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "default": [
+                    {
+                      "product": "Product object"
+                    }
+                  ]
                 }
               }
             }
@@ -403,6 +769,47 @@
                     "user": {
                       "email": "email",
                       "username": "username"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/payment/{id}": {
+      "post": {
+        "tags": ["Payment"],
+        "summary": "To'lov uchun",
+        "description": "To'lovga o'tish stripe kutubxonasi yordamida qilindi",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "To'lov Idsi orqali kiritiladi",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "default": {
+                    "url": {
+                      "url": "https://4545465465"
                     }
                   }
                 }

@@ -21,6 +21,10 @@ router.post("/:id", Auth.verifyToken, async (req, res) => {
     status: "pending",
   });
   if (!order) {
+    if (quantity == 0)
+      return res
+        .status(400)
+        .json({ err: "Maxsulot soni bo'sh bo'lmasligi kerak" });
     try {
       const orders = await Orders.create({
         author: id,
@@ -36,10 +40,38 @@ router.post("/:id", Auth.verifyToken, async (req, res) => {
       author: id,
       "products.product": req.params.id,
     });
+    if (quantity == 0) {
+      let arr = addedOrder.products
+        .map((e, i) => {
+          return e.product && e.product != req.params.id ? e : "";
+        })
+        .filter((e) => e);
 
-    if (addedOrder) {
+      const newOrder = await Orders.findOneAndUpdate(
+        {
+          author: id,
+          status: "pending",
+        },
+        {
+          products: arr,
+        },
+        { new: true }
+      );
+      if (!newOrder.products.length)
+        await Orders.findByIdAndDelete(newOrder._id);
+
+      return res
+        .status(200)
+        .json(
+          newOrder.products.length
+            ? { order: newOrder }
+            : { message: "Order tizimdan o'chirildi" }
+        );
+    }
+
+    if (addedOrder && addedOrder.products.length) {
       const productList = addedOrder.products;
-      let index;
+      let index = 0;
       productList.map((e, i) => {
         if (e.product == req.params.id) index = i;
       });
@@ -60,7 +92,7 @@ router.post("/:id", Auth.verifyToken, async (req, res) => {
       )
         .populate("author")
         .populate("products.product");
-      res.json(updateOrder);
+      res.status(200).json({ order: updateOrder });
     } else {
       const pushedProduct = await Orders.findOneAndUpdate(
         {
@@ -79,7 +111,7 @@ router.post("/:id", Auth.verifyToken, async (req, res) => {
         .populate("author")
         .populate("products.product");
 
-      res.json(pushedProduct);
+      res.status(200).json({ product: pushedProduct });
     }
   }
 });

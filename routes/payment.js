@@ -3,16 +3,20 @@ const stripe = require("stripe")(
 );
 const express = require("express");
 const Orders = require("../models/order");
+const Auth = require("../middlewares/auth");
 
 const router = express.Router();
 
-router.post("/:id", async (req, res) => {
+router.post("/:id", Auth.verifyToken, async (req, res) => {
+  if (req.user.rol != "user")
+    return res.status(401).json({ err: "Siz bu usulga kira olmaysiz" });
   let line_items = [];
   try {
     const order = await Orders.findById(req.params.id)
       .populate("author")
       .populate("products.product");
-
+    if (req.user.id != order.author._id)
+      return res.status(401).json({ err: "Kirishda xatolik" });
     line_items = order.products.map((e, i) => {
       return {
         price_data: {
@@ -27,44 +31,20 @@ router.post("/:id", async (req, res) => {
       };
     });
   } catch (err) {
-    res.json({ err: "Bunday buyutrtma topilmadi" });
+    res.json({ err: "Bunday buyurtma topilmadi" });
   }
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: line_items,
       mode: "payment",
-      success_url: "http://localhost:8080/api/payment/webhook",
-      cancel_url: "https://example.com/cancel",
+      success_url: "https://shy-pear-crab-kit.cyclic.app/swagger/",
+      cancel_url: "https://shy-pear-crab-kit.cyclic.app/swagger/",
     });
     res.json({ url: session.url });
   } catch (err) {
-    res.json({ err: "gvdsvydsgb" });
+    res.json({ err: "server internal error" });
   }
 });
-
-// router.post("/webhook", async (req, res) => {
-//   let data;
-//   try {
-//     data = req.body;
-//   } catch (err) {
-//     console.log(`Error parsing webhook JSON: ${err}`);
-//     return res.sendStatus(400);
-//   }
-
-//   if (data.type === "charge.succeeded") {
-//     console.log(data);
-//     const chargeId = data.data.object.id;
-//     const charge = await stripe.charges.retrieve(chargeId);
-//     const amount = charge.amount / 100; // Stripe amounts are in cents, so divide by 100 to get the dollar amount
-//     const currency = charge.currency;
-//     const customerId = charge.customer;
-//     const productId = charge.metadata.product_id;
-
-//     // Do something with the payment information, such as update your application's records and fulfill the user's order
-//   }
-
-//   res.sendStatus(200);
-// });
 
 module.exports = router;

@@ -18,6 +18,7 @@ const loginRouter = require("./routes/login");
 const productRouter = require("./routes/product");
 const sellersRouter = require("./routes/seller");
 const adminsRouter = require("./routes/admin");
+const usersRouter = require("./routes/user");
 const ordersRouter = require("./routes/order");
 const verifyRouter = require("./routes/verify");
 const paymentRouter = require("./routes/payment");
@@ -31,7 +32,9 @@ app.use("/upload", express.static("upload"));
 //swagger documentation for our server API
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.get("/", (req, res) => res.json({ message: "Welcome to my API" }));
+app.get("/", (req, res) =>
+  res.status(200).sendFile(path.join(__dirname, "../", "public", "verify.html"))
+);
 
 app.use("/api/register", registerRouter);
 app.use("/api/login", loginRouter);
@@ -41,28 +44,9 @@ app.use("/api/admin", adminsRouter);
 app.use("/api/orders", ordersRouter);
 app.use("/api/verify", verifyRouter);
 app.use("/api/payment", paymentRouter);
+app.use("/api/user", usersRouter);
 
 const port = process.env.PORT || 8080;
-
-app.post("/webhook", async (req, res) => {
-  const payload = req.body;
-  const eventType = payload.type;
-  const eventObject = payload.data.object;
-
-  if (eventType === "charge.succeeded") {
-    const charge = await stripe.charges.retrieve(eventObject.id);
-    if (charge.status === "succeeded") {
-      // Charge was successful
-      console.log("Charge succeeded:", charge.id);
-    } else {
-      // Charge was not successful
-      console.log("Charge failed:", charge.id);
-    }
-  }
-
-  // Return a 200 response to acknowledge receipt of the webhook
-  res.json({ received: true });
-});
 
 mongoose.connect(
   "mongodb+srv://yakubjonovfazliddin777:NgnKjv2mcReaIV9C@cluster0.hlkpdtd.mongodb.net/online-market?retryWrites=true&w=majority",

@@ -1,7 +1,6 @@
 const express = require("express");
 const Joi = require("joi");
 const bcrypt = require("bcrypt");
-const logger = require("../winston");
 const nodemailer = require("nodemailer");
 const Register = require("../models/register");
 

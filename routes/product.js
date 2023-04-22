@@ -8,6 +8,20 @@ const Users = require("../models/user");
 
 const router = express.Router();
 
+// my added products
+
+router.get("/my-add-products", Auth.verifyToken, async (req, res) => {
+  if (req.user.rol != "seller") {
+    return res.status(401).json({ err: "Siz mahsulot yaratmaysiz" });
+  }
+  try {
+    const products = await Product.find({ createdUser: req.user.id });
+    res.status(200).json({ products: products });
+  } catch (err) {
+    res.status(400).json({ err: "Xatolik yuz berdi tekshiring" });
+  }
+});
+
 router.get("/all", async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
@@ -52,7 +66,7 @@ router.post(
   async (req, res) => {
     const { title, description, price, category } = req.body;
     let image = "";
-
+    let orginalName = "";
     if (req.user.rol != "seller") {
       return res.status(401).json("Siz maxsulot qoshish huquqiga ega emassiz");
     }
@@ -68,6 +82,7 @@ router.post(
       let path = "";
       req.files.forEach(function (files, index, array) {
         path = path + files.path + ",";
+        orginalName = orginalName + files.originalname;
       });
       image = path.substring(0, path.lastIndexOf(","));
     }
@@ -85,6 +100,7 @@ router.post(
         ...value,
         image,
         createdUser: req.user.id,
+        orginalName,
       });
       const user = await Users.findById(req.user.id);
       let transporter = nodemailer.createTransport({
@@ -133,11 +149,11 @@ router.post(
 
 //delete own product by seller
 
-router.delete("/:id", Auth.verifyToken, async (req, res) => {
+router.delete("/delete/:id", Auth.verifyToken, async (req, res) => {
   if (req.user.rol != "seller") {
     return res
       .status(401)
-      .json({ err: "Siz bu buyruqni amalgaoshira olmaysiz" });
+      .json({ err: "Siz bu buyruqni amalga oshira olmaysiz" });
   }
   try {
     const product = await Product.findById(req.params.id);
@@ -174,7 +190,7 @@ router.delete("/:id", Auth.verifyToken, async (req, res) => {
 });
 
 //update own product data by seller
-router.put("/:id", Auth.verifyToken, async (req, res) => {
+router.put("/update/:id", Auth.verifyToken, async (req, res) => {
   const { title, description, price, category } = req.body;
   if (req.user.rol != "seller") {
     return res
