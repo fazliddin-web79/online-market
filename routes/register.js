@@ -44,7 +44,7 @@ router.post("/", async (req, res) => {
       to: value.email, // replace with the user's email address
       subject: "Verification for Online Market to LOG IN",
       text: "Siz ro'yhatdan o'tishni tasdiqlashingiz lozim",
-      html: `<p> Ushbu <a href="http://localhost:8080/api/verify/${user._id}">Havolaga </a> o'ting</p>`,
+      html: `<p> Ushbu <a href="https://shy-pear-crab-kit.cyclic.app/api/verify/${user._id}">Havolaga </a> o'ting</p>`,
     };
 
     // send the email
